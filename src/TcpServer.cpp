@@ -18,10 +18,8 @@ void reset(int)
     connected = 0;
 }
 
-void* newService(void* port)
+int createSocket(int socket_fd)
 {
-    int socket_fd = 0;
-
     if((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         cout<<strerror(errno)<<endl;
@@ -29,9 +27,9 @@ void* newService(void* port)
     }
 
     struct sockaddr_in my_addr;
-    //const int PORT = 3333;
+    const int PORT = 3333;
     my_addr.sin_family = AF_INET;
-    my_addr.sin_port = htons(*((int*)(port)));
+    my_addr.sin_port = htons(PORT);
     my_addr.sin_addr.s_addr = INADDR_ANY;
     bzero(&(my_addr.sin_zero), 8);
     if(bind(socket_fd, (struct sockaddr*)(&my_addr), sizeof(sockaddr)) == -1)
@@ -47,6 +45,12 @@ void* newService(void* port)
         exit(1);
     }
 
+    return socket_fd;
+}
+
+void* newService(void* fd)
+{
+    int socket_fd = *((int*)fd);
     socklen_t sin_size;
     int client_fd = 0;
     struct sockaddr_in remote_addr;
@@ -82,22 +86,15 @@ void* newService(void* port)
     close(socket_fd);
 }
 
-void* test(void*)
-{
-    cout<<"test"<<endl;
-    while(1)
-    {
-    }
-}
-
 void TcpServer::create()
 {
     pthread_t tid[2];
-    int port1 = 3333;
-    int port2 = 4444;
 
-    pthread_create(&tid[0], NULL, newService, (void*)(&port1));
-    pthread_create(&tid[1], NULL, newService, (void*)(&port2));
+    int socket_fd = 0;
+    socket_fd = createSocket(socket_fd);
+
+    pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
+    pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
     while(1)
     {
     }
