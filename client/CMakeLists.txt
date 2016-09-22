@@ -1,0 +1,2 @@
+ADD_EXECUTABLE(net_engine_client main.cpp)
+TARGET_LINK_LIBRARIES(net_engine_client tcpclient)
