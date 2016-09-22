@@ -5,6 +5,7 @@ TODO:
 1. code refactoring;
 
 2. problem that "address already in use" when the server process exit with "Ctrl+c"
+    (done) : add function "setsockopt" before binding.
 
 3. several sockets on one port
     (done) : create, bind and listen in main thread with socket_fd, accept, send&recv in sub threads with client_fd.

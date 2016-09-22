@@ -32,6 +32,11 @@ int createSocket(int socket_fd)
     my_addr.sin_port = htons(PORT);
     my_addr.sin_addr.s_addr = INADDR_ANY;
     bzero(&(my_addr.sin_zero), 8);
+
+    // when the server process exit without client closing the socket, should reuse the socket.
+    int opt = 1;
+    setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     if(bind(socket_fd, (struct sockaddr*)(&my_addr), sizeof(sockaddr)) == -1)
     {
         cout<<strerror(errno)<<endl;
