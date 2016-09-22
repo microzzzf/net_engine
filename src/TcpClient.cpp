@@ -55,7 +55,7 @@ void TcpClient::create()
         char rec_buffer[BUFFER_LEN];
         connected = 1;
 
-        while(fgets(send_buffer, sizeof(send_buffer), stdin) != NULL && connected)
+        while(connected && fgets(send_buffer, sizeof(send_buffer), stdin) != NULL)
         {
             send(client_fd, send_buffer, strlen(send_buffer), 0);
             signal(SIGPIPE, reset);
