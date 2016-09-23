@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <iostream>
+#include <thread>
 #include "TcpServer.h"
 
 using namespace std;
@@ -53,9 +54,9 @@ int createSocket(int socket_fd)
     return socket_fd;
 }
 
-void* newService(void* fd)
+void newService(int socket_fd)
 {
-    int socket_fd = *((int*)fd);
+    //int socket_fd = *((int*)fd);
     socklen_t sin_size;
     int client_fd = 0;
     struct sockaddr_in remote_addr;
@@ -93,13 +94,17 @@ void* newService(void* fd)
 
 void TcpServer::create()
 {
-    pthread_t tid[2];
+    //pthread_t tid[2];
 
     int socket_fd = 0;
     socket_fd = createSocket(socket_fd);
 
-    pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
-    pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
+    //pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
+    //pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
+    
+    thread my_thread;
+    my_thread = thread(newService, socket_fd);
+
     while(1)
     {
     }
