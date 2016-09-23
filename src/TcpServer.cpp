@@ -5,18 +5,11 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <iostream>
 #include <string.h>
+#include <iostream>
 #include "TcpServer.h"
 
 using namespace std;
-
-//code refactoring
-/*void TcpServer::handleSignal(int sig, int flag, void (handle*)(int))
-{
-    signal(sig, handle);
-}*/
-//code refactoring end
 
 int connected = 1;
 

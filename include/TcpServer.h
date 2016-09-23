@@ -5,7 +5,6 @@ class TcpServer
 {
 public:
     void create();
-    //void handleSignal(int signal, int flag, void (handle*)(int));
 
 private:
 
