@@ -19,16 +19,17 @@ void reset(int)
     connected = 0;
 }
 
-int createSocket(int socket_fd)
+int TcpServer::generateSocket()
 {
+    int socket_fd = 0;
+
     if((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         cout<<strerror(errno)<<endl;
-        exit(1);
+        return -1;
     }
 
     struct sockaddr_in my_addr;
-    const int PORT = 3333;
     my_addr.sin_family = AF_INET;
     my_addr.sin_port = htons(PORT);
     my_addr.sin_addr.s_addr = INADDR_ANY;
@@ -41,34 +42,29 @@ int createSocket(int socket_fd)
     if(bind(socket_fd, (struct sockaddr*)(&my_addr), sizeof(sockaddr)) == -1)
     {
         cout<<strerror(errno)<<endl;
-        exit(1);
+        return -1;
     }
 
-    const int BACKLOG = 10;
     if(listen(socket_fd, BACKLOG) == -1)
     {
         cout<<strerror(errno)<<endl;
-        exit(1);
+        return -1;
     }
 
     return socket_fd;
 }
 
-void newService(int socket_fd)
+void TcpServer::generateService()
 {
-    //int socket_fd = *((int*)fd);
-    socklen_t sin_size;
+    socklen_t sin_size = sizeof(struct sockaddr_in);
     int client_fd = 0;
     struct sockaddr_in remote_addr;
     int len = 0;
-    sin_size = sizeof(struct sockaddr_in);
-    
-    const int BUFFER_LEN = 4096;
-    char buffer[BUFFER_LEN];
+    char buffer[LEN_BUFFER];
 
     while(1)
     {
-        if((client_fd = accept(socket_fd, (sockaddr*)(&remote_addr), &sin_size)) == -1)
+        if((client_fd = accept(m_socket_fd, (sockaddr*)(&remote_addr), &sin_size)) == -1)
         {
             cout<<strerror(errno)<<endl;
             continue;
@@ -89,21 +85,23 @@ void newService(int socket_fd)
         close(client_fd);
     }
                      
-    close(socket_fd);
+    close(m_socket_fd);
 }
 
-void TcpServer::create()
+TcpServer::TcpServer()
 {
-    //pthread_t tid[2];
+    m_socket_fd = generateSocket(); 
+    if(m_socket_fd == -1)
+    {
+        cout<<"Generate socket error!"<<endl;
+    }
+}
 
-    int socket_fd = 0;
-    socket_fd = createSocket(socket_fd);
-
-    //pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
-    //pthread_create(&tid[0], NULL, newService, (void*)(&socket_fd));
-    
-    thread my_thread;
-    my_thread = thread(newService, socket_fd);
+void TcpServer::newConnection()
+{
+    thread th[2];
+    th[0] = thread(bind(&TcpServer::generateService, this));
+    th[1] = thread(bind(&TcpServer::generateService, this));
 
     while(1)
     {

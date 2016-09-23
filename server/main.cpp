@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     TcpServer server;
-    server.create();
-
+    server.newConnection();
+    
     return 0;
 }
