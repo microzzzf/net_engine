@@ -11,6 +11,13 @@
 
 using namespace std;
 
+//code refactoring
+/*void TcpServer::handleSignal(int sig, int flag, void (handle*)(int))
+{
+    signal(sig, handle);
+}*/
+//code refactoring end
+
 int connected = 1;
 
 void reset(int)
