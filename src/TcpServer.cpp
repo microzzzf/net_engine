@@ -59,7 +59,6 @@ void TcpServer::generateService()
     socklen_t sin_size = sizeof(struct sockaddr_in);
     int client_fd = 0;
     struct sockaddr_in remote_addr;
-    int len = 0;
     char buffer[LEN_BUFFER];
 
     while(1)
@@ -73,7 +72,7 @@ void TcpServer::generateService()
         connected = 1;
         while(connected)
         {
-            len = recv(client_fd, buffer, sizeof(buffer), 0);
+            recv(client_fd, buffer, sizeof(buffer), 0);
             cout<<buffer;
             memset(buffer, 0, sizeof(buffer));
             memcpy(buffer, "done\n", 5);
