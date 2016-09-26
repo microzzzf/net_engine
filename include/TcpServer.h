@@ -1,7 +1,7 @@
 #ifndef TCP_SERVER_H_
 #define TCP_SERVER_H_
 
-class TcpServer
+class TcpServer : public NonCopyable
 {
 public:
     TcpServer();
