@@ -24,11 +24,11 @@ int TcpServer::generateSocket()
 {
     int socket_fd = 0;
 
-    if((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-        std::cout<<strerror(errno)<<std::endl;
-        return -1;
-    }
+//    if((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+//    {
+//        std::cout<<strerror(errno)<<std::endl;
+//        return -1;
+//    }
 
     struct sockaddr_in my_addr;
     my_addr.sin_family = AF_INET;
