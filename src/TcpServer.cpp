@@ -9,8 +9,9 @@
 #include <iostream>
 #include <thread>
 #include "TcpServer.h"
+#include "Socket.h"
 
-using namespace std;
+using namespace netengine;
 
 int connected = 1;
 
@@ -25,7 +26,7 @@ int TcpServer::generateSocket()
 
     if((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        cout<<strerror(errno)<<endl;
+        std::cout<<strerror(errno)<<std::endl;
         return -1;
     }
 
@@ -39,15 +40,15 @@ int TcpServer::generateSocket()
     int opt = 1;
     setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-    if(bind(socket_fd, (struct sockaddr*)(&my_addr), sizeof(sockaddr)) == -1)
+    if(::bind(socket_fd, (struct sockaddr*)(&my_addr), sizeof(sockaddr)) == -1)
     {
-        cout<<strerror(errno)<<endl;
+        std::cout<<strerror(errno)<<std::endl;
         return -1;
     }
 
     if(listen(socket_fd, BACKLOG) == -1)
     {
-        cout<<strerror(errno)<<endl;
+        std::cout<<strerror(errno)<<std::endl;
         return -1;
     }
 
@@ -65,7 +66,7 @@ void TcpServer::generateService()
     {
         if((client_fd = accept(m_socket_fd, (sockaddr*)(&remote_addr), &sin_size)) == -1)
         {
-            cout<<strerror(errno)<<endl;
+            std::cout<<strerror(errno)<<std::endl;
             continue;
         }
 
@@ -73,7 +74,7 @@ void TcpServer::generateService()
         while(connected)
         {
             recv(client_fd, buffer, sizeof(buffer), 0);
-            cout<<buffer;
+            std::cout<<buffer;
             memset(buffer, 0, sizeof(buffer));
             memcpy(buffer, "done\n", 5);
             send(client_fd, buffer, strlen(buffer), 0);
@@ -92,15 +93,15 @@ TcpServer::TcpServer()
     m_socket_fd = generateSocket(); 
     if(m_socket_fd == -1)
     {
-        cout<<"Generate socket error!"<<endl;
+        std::cout<<"Generate socket error!"<<std::endl;
     }
 }
 
 void TcpServer::newConnection()
 {
-    thread th[2];
-    th[0] = thread(bind(&TcpServer::generateService, this));
-    th[1] = thread(bind(&TcpServer::generateService, this));
+    std::thread th[2];
+    th[0] = std::thread(std::bind(&TcpServer::generateService, this));
+    th[1] = std::thread(std::bind(&TcpServer::generateService, this));
 
     while(1)
     {

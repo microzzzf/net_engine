@@ -1,7 +1,7 @@
 #include <iostream>
 #include "TcpClient.h"
 
-using namespace std;
+using namespace netengine;
 
 int main(int argc, char* argv[])
 {

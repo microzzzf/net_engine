@@ -1,6 +1,9 @@
 #ifndef TCP_SERVER_H_
 #define TCP_SERVER_H_
 
+namespace netengine
+{
+
 class TcpServer
 {
 public:
@@ -17,5 +20,9 @@ private:
 
     int m_socket_fd;
 };
+
+}
+
+
 
 #endif

@@ -17,7 +17,7 @@
 #include <string.h>
 #include <signal.h>
 
-using namespace std;
+using namespace netengine;
 
 int connected = 1;
 
@@ -34,7 +34,7 @@ void TcpClient::create()
     {
         if((client_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
         {
-            cout<<strerror(errno)<<endl;
+            std::cout<<strerror(errno)<<std::endl;
             exit(1);
         }
 
@@ -46,7 +46,7 @@ void TcpClient::create()
 
         if(connect(client_fd, (struct sockaddr*)(&server_addr), sizeof(server_addr)) < 0)
         {
-            cout<<strerror(errno)<<endl;
+            std::cout<<strerror(errno)<<std::endl;
             exit(1);
         }
 
@@ -60,7 +60,7 @@ void TcpClient::create()
             send(client_fd, send_buffer, strlen(send_buffer), 0);
             signal(SIGPIPE, reset);
             recv(client_fd, rec_buffer, sizeof(rec_buffer), 0);
-            cout<<rec_buffer;
+            std::cout<<rec_buffer;
 
             memset(send_buffer, 0, sizeof(send_buffer));
             memset(rec_buffer, 0, sizeof(rec_buffer));

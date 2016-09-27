@@ -8,6 +8,9 @@
 #ifndef _TCPCLIENT_H
 #define _TCPCLIENT_H
 
+namespace netengine
+{
+
 class TcpClient
 {
 public:
@@ -15,5 +18,7 @@ public:
 
 private:
 };
+
+}
 
 #endif
