@@ -1,10 +1,7 @@
 #include <signal.h>
 #include <unistd.h>
-#include <arpa/inet.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <string.h>
 #include <iostream>
 #include <thread>
@@ -24,41 +21,6 @@ TcpServer::~TcpServer()
 {
     delete m_socket;
 }
-
-/*int TcpServer::generateSocket()
-{
-    int socket_fd = 0;
-
-//    if((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-//    {
-//        std::cout<<strerror(errno)<<std::endl;
-//        return -1;
-//    }
-
-    struct sockaddr_in my_addr;
-    my_addr.sin_family = AF_INET;
-    my_addr.sin_port = htons(PORT);
-    my_addr.sin_addr.s_addr = INADDR_ANY;
-    bzero(&(my_addr.sin_zero), 8);
-
-    // when the server process exit without client closing the socket, should reuse the socket.
-    int opt = 1;
-    setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-
-    if(::bind(socket_fd, (struct sockaddr*)(&my_addr), sizeof(sockaddr)) == -1)
-    {
-        std::cout<<strerror(errno)<<std::endl;
-        return -1;
-    }
-
-    if(listen(socket_fd, BACKLOG) == -1)
-    {
-        std::cout<<strerror(errno)<<std::endl;
-        return -1;
-    }
-
-    return socket_fd;
-}*/
 
 void TcpServer::newSubThreadForConnection()
 {
