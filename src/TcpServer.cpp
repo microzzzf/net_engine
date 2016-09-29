@@ -20,7 +20,12 @@ void reset(int)
     connected = 0;
 }
 
-int TcpServer::generateSocket()
+TcpServer::~TcpServer()
+{
+    delete m_socket;
+}
+
+/*int TcpServer::generateSocket()
 {
     int socket_fd = 0;
 
@@ -53,55 +58,55 @@ int TcpServer::generateSocket()
     }
 
     return socket_fd;
-}
+}*/
 
-void TcpServer::generateService()
+void TcpServer::newSubThreadForConnection()
 {
-    socklen_t sin_size = sizeof(struct sockaddr_in);
+    int socket_fd = m_socket->getSocketFd();
+
     int client_fd = 0;
-    struct sockaddr_in remote_addr;
     char buffer[LEN_BUFFER];
 
     while(1)
     {
-        if((client_fd = accept(m_socket_fd, (sockaddr*)(&remote_addr), &sin_size)) == -1)
-        {
-            std::cout<<strerror(errno)<<std::endl;
-            continue;
-        }
+        client_fd = m_socket->accept(socket_fd);
 
         connected = 1;
         while(connected)
         {
-            recv(client_fd, buffer, sizeof(buffer), 0);
+            m_socket->receive(client_fd, buffer, sizeof(buffer));
             std::cout<<buffer;
             memset(buffer, 0, sizeof(buffer));
             memcpy(buffer, "done\n", 5);
-            send(client_fd, buffer, strlen(buffer), 0);
+            m_socket->send(client_fd, buffer, strlen(buffer));
             signal(SIGPIPE, reset);
             memset(buffer, 0, sizeof(buffer));
         }
 
         close(client_fd);
     }
-                     
-    close(m_socket_fd);
 }
 
 TcpServer::TcpServer()
 {
-    m_socket_fd = generateSocket(); 
-    if(m_socket_fd == -1)
-    {
-        std::cout<<"Generate socket error!"<<std::endl;
-    }
+    m_socket = new Socket();
+    const int socket_fd = m_socket->getSocketFd();
+    
+    struct ::sockaddr_in my_addr;
+    my_addr.sin_family = AF_INET;
+    my_addr.sin_port = htons(PORT);
+    my_addr.sin_addr.s_addr = INADDR_ANY;
+    bzero(&(my_addr.sin_zero), 8);
+
+    m_socket->bind(socket_fd, (struct ::sockaddr*)(&my_addr));
+    m_socket->listen(socket_fd);
 }
 
 void TcpServer::newConnection()
 {
     std::thread th[2];
-    th[0] = std::thread(std::bind(&TcpServer::generateService, this));
-    th[1] = std::thread(std::bind(&TcpServer::generateService, this));
+    th[0] = std::thread(std::bind(&TcpServer::newSubThreadForConnection, this));
+    th[1] = std::thread(std::bind(&TcpServer::newSubThreadForConnection, this));
 
     while(1)
     {

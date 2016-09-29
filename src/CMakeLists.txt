@@ -1,4 +1,5 @@
 SET(SOURCE_FILES_SERVER 
+    Socket.cpp
     TcpServer.cpp)
 SET(SOURCE_FILES_CLIENT
     TcpClient.cpp)

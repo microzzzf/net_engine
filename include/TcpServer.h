@@ -9,19 +9,18 @@ namespace netengine
 class TcpServer
 {
 public:
-    TcpServer() : m_socket(new Socket()) {}
+    TcpServer();
+    ~TcpServer();
     void newConnection();
 
 private:
-    int generateSocket();
-    void generateService();
+    void newSubThreadForConnection();
 
     static const int PORT = 3333;
     static const int BACKLOG = 10;
     static const int LEN_BUFFER = 4096;
 
-    //int m_socket_fd;
-    Socket m_socket;
+    Socket* m_socket;
 };
 
 }
